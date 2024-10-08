@@ -19,7 +19,7 @@ import streamlit as st  # type: ignore
 
 ####
 IMAGE_PATH = "examples/01_g.JPG"
-GROUND_TRUTH_PATH = "examples/01_g.tif"
+GROUND_TRUTH_PATH = "input/truth"
 OUTPUT_DIR = "output/"
 ####
 
@@ -83,7 +83,8 @@ def remove_border(color_img: np.ndarray, image: np.ndarray) -> np.ndarray:
 
 # Process the input image to extract the vessels from it
 def process_input(path: str) -> np.ndarray:
-    path = os.path.join("examples", path)
+    # input/original/path
+    path = f"input/original/{path}"
     color_image = cv.imread(path)
     if color_image is None:
         raise FileNotFoundError(f'"{path}" not found')
