@@ -51,13 +51,13 @@ def normalize(image: np.ndarray, factor: float) -> np.ndarray:
 
 
 # Apply Gabor Filter to the image to enhance the features
-def apply_gabor_filter(image: np.ndarray) -> np.ndarray:
+def apply_gabor_filter_mutliscale(image: np.ndarray) -> np.ndarray:
     filtered_real, _ = gabor(image, frequency=0.6)
     return normalize(filtered_real, 255).astype(np.uint8)
 
 
 # Apply Gabor Filter to the image to enhance the features
-def apply_gabor_filter_multiscale(image: np.ndarray) -> np.ndarray:
+def apply_gabor_filter(image: np.ndarray) -> np.ndarray:
     gabor_kernel = cv.getGaborKernel((21, 21), 8.0, 0, 10.0, 0.5, 0, ktype=cv.CV_32F)
     filtered_image = cv.filter2D(image, cv.CV_8UC3, gabor_kernel)
     return filtered_image
@@ -201,11 +201,14 @@ st.write("Upload an image to process with novel techniques and visualize the res
 uploaded_image = st.file_uploader(
     "Choose an image...", type=["jpg", "jpeg", "png", "tif"]
 )
+
 uploaded_truth = st.file_uploader(
     "Choose the ground truth image...", type=["jpg", "jpeg", "png", "tif"]
 )
 
-if uploaded_image is not None and uploaded_truth is not None:
+if (
+    uploaded_image is not None and uploaded_truth is not None
+):  # if both images are uploaded
     img = np.array(Image.open(uploaded_image))
     truth = np.array(Image.open(uploaded_truth).convert("L"))
 
@@ -230,12 +233,17 @@ if uploaded_image is not None and uploaded_truth is not None:
     # Option to save the processed image
     save_option = st.checkbox("Save processed image")
     if save_option:
-        out_path = OUTPUT_DIR + "output.jpg"
+        out_path = (
+            OUTPUT_DIR + "output_" + uploaded_image.name
+        )  # save the processed image in the output directory
         cv.imwrite(out_path, processed_img)
         st.write(f"Processed image saved at {out_path}")
 
     # Display the confusion matrix
     st.image("output/confusion_matrix.png")
+
+    # Delete the confusion matrix file
+    os.remove("output/confusion_matrix.png")
 
 
 # if __name__ == "__main__":
