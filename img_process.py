@@ -2,7 +2,7 @@
 import cv2 as cv  # type: ignore
 
 from skimage.filters import frangi  # type: ignore
-
+import subprocess
 import numpy as np  # type: ignore
 
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix  # type: ignore
@@ -68,6 +68,7 @@ def apply_morphology(image: np.ndarray) -> np.ndarray:
 
 
 def process_input(path: str) -> np.ndarray:
+    path = "input/original/" + path
     color_image = cv.imread(path)
     if color_image is None:
         raise FileNotFoundError(f'"{path}" not found')
@@ -103,15 +104,25 @@ def process_input(path: str) -> np.ndarray:
 
     end_result = remove_border(color_image, cleaned_image)  # 8 - border removed
 
-    cv.imwrite(OUTPUT_DIR + "0gray.jpg", gray_image)
-    cv.imwrite(OUTPUT_DIR + "1equalized.jpg", equalized)
-    cv.imwrite(OUTPUT_DIR + "2denoised.jpg", denoised)
-    cv.imwrite(OUTPUT_DIR + "3adap.jpg", adaptive_thresh)
-    cv.imwrite(OUTPUT_DIR + "4vessels.jpg", vessels)
-    cv.imwrite(OUTPUT_DIR + "5thresh.jpg", thresh)
-    cv.imwrite(OUTPUT_DIR + "6small_removed.jpg", small_removed)
-    cv.imwrite(OUTPUT_DIR + "7dilated.jpg", dilated_image)
-    cv.imwrite(OUTPUT_DIR + "8cleaned.jpg", cleaned_image)
+    # cv.imwrite(OUTPUT_DIR + "0gray.jpg", gray_image)
+    # cv.imwrite(OUTPUT_DIR + "1equalized.jpg", equalized)
+    # cv.imwrite(OUTPUT_DIR + "2denoised.jpg", denoised)
+    # cv.imwrite(OUTPUT_DIR + "3adap.jpg", adaptive_thresh)
+    # cv.imwrite(OUTPUT_DIR + "4vessels.jpg", vessels)
+    # cv.imwrite(OUTPUT_DIR + "5thresh.jpg", thresh)
+    # cv.imwrite(OUTPUT_DIR + "6small_removed.jpg", small_removed)
+    # cv.imwrite(OUTPUT_DIR + "7dilated.jpg", dilated_image)
+    # cv.imwrite(OUTPUT_DIR + "8cleaned.jpg", cleaned_image)
+
+    st.image(gray_image, caption="Gray Image", use_column_width=True)
+    st.image(equalized, caption="Equalized Image", use_column_width=True)
+    st.image(adaptive_thresh, caption="Adaptive Threshold", use_column_width=True)
+    st.image(denoised, caption="Denoised Image", use_column_width=True)
+    st.image(vessels, caption="Vessels", use_column_width=True)
+    st.image(thresh, caption="Threshold", use_column_width=True)
+    st.image(small_removed, caption="Small Removed", use_column_width=True)
+    st.image(dilated_image, caption="Dilated Image", use_column_width=True)
+    st.image(cleaned_image, caption="Cleaned Image", use_column_width=True)
 
     return end_result
 
@@ -210,11 +221,7 @@ if (
         cv.imwrite(out_path, processed_img)
         st.write(f"Processed image saved at {out_path}")
 
-    # Display the confusion matrix
-    st.image("output/confusion_matrix.png")
-
-    # Delete the confusion matrix file
-    os.remove("output/confusion_matrix.png")
+    subprocess.run(["python", "tortuosity.py"])
 
 # if __name__ == "__main__":
 #     img = process_input(IMAGE_PATH)
