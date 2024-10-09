@@ -19,7 +19,7 @@ import streamlit as st  # type: ignore
 
 ####
 IMAGE_PATH = "examples/01_g.JPG"
-GROUND_TRUTH_PATH = "input/truth"
+GROUND_TRUTH_PATH = "examples/01_g_truth.tif"
 OUTPUT_DIR = "output/"
 ####
 
@@ -96,10 +96,10 @@ def process_input(path: str) -> np.ndarray:
     equalized = clahe.apply(gray_image)
 
     # Apply Gabor filter to enhance the features of the image
-    gabor_filtered = apply_gabor_filter(equalized)
+    # gabor_filtered = apply_gabor_filter(equalized)
 
     # Apply Morphological Operations to remove noise and fill holes in the image
-    morphed_image = apply_morphology(gabor_filtered)
+    morphed_image = apply_morphology(equalized)
 
     # Fast Non-Local Means Denoising for removing noise from the image
     denoised = cv.fastNlMeansDenoising(morphed_image, None, 15)
